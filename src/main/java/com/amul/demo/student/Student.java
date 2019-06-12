@@ -1,4 +1,4 @@
-package com.amigoscode.demo.student;
+package com.amul.demo.student;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

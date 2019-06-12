@@ -1,4 +1,4 @@
-package com.amigoscode.demo.exception;
+package com.amul.demo.exception;
 
 import org.springframework.http.HttpStatus;
 

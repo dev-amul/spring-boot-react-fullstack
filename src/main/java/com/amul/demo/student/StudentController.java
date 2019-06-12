@@ -1,4 +1,4 @@
-package com.amigoscode.demo.student;
+package com.amul.demo.student;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

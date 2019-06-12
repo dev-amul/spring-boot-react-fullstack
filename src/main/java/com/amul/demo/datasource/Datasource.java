@@ -1,4 +1,4 @@
-package com.amigoscode.demo.datasource;
+package com.amul.demo.datasource;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -7,7 +7,7 @@ server:
 
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://fullstackspringbootdb.celswdmxhcr1.eu-west-1.rds.amazonaws.com:5432/amigoscodedemo
-    username: amigoscode
+    jdbc-url: jdbc:postgresql://fullstackspringbootdb.celswdmxhcr1.eu-west-1.rds.amazonaws.com:5432/amulcodedemo
+    username: amulcode
     password: 123456789
     pool-size: 30

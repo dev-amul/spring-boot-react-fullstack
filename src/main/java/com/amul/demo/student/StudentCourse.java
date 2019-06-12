@@ -1,4 +1,4 @@
-package com.amigoscode.demo.student;
+package com.amul.demo.student;
 
 import java.time.LocalDate;
 import java.util.UUID;
