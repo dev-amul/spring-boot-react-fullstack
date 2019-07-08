@@ -1,6 +1,6 @@
 
 
-## Architecture
+# Architecture
 
 The project follows a modular component-based architecture typical of React applications. It uses modern JavaScript practices and React hooks for managing component lifecycle and state.
 
@@ -11,7 +11,7 @@ The project follows a modular component-based architecture typical of React appl
 * Client-side routing can be integrated using React Router
 * State management with React state or additional libraries if needed
 
-## Tech Stack
+# Tech Stack
 
 This application is built using the latest web technologies and tools to ensure optimal performance and developer experience.
 
@@ -25,7 +25,7 @@ This application is built using the latest web technologies and tools to ensure 
 * ESLint and Jest for code quality and testing
 * HTML and CSS for layout and styling
 
-## Setup
+# Setup
 
 Follow the steps below to set up the application for local development.
 
@@ -38,7 +38,7 @@ Follow the steps below to set up the application for local development.
 * Open http localhost 3000 in your browser to view the app
 * Use npm test to run the test suite in watch mode
 
-## Deployment
+# Deployment
 
 The application can be built and deployed using standard web hosting or cloud platforms.
 
@@ -49,7 +49,7 @@ The application can be built and deployed using standard web hosting or cloud pl
 * Output can be deployed to services like Netlify Vercel GitHub Pages or your own server
 * Refer to Create React App documentation for detailed deployment options
 
-## Features
+# Features
 
 This React project includes several useful features for efficient development and performance optimization.
 
@@ -61,7 +61,7 @@ This React project includes several useful features for efficient development an
 * Customizable build and configuration using eject
 * Progressive Web App support optionally enabled
 
-## Customization and Advanced Usage
+# Customization and Advanced Usage
 
 Create React App allows advanced users to take full control of the configuration through the eject command.
 
