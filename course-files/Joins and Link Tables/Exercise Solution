@@ -13,20 +13,22 @@ List<StudentCourse> getAllCoursesForStudent(UUID studentId) {
 // 3.
 
 private RowMapper<StudentCourse> mapStudentCourseFromDb() {
-        return (resultSet, i) ->
-                new StudentCourse(
-                        UUID.fromString(resultSet.getString("student_id")),
-                        UUID.fromString(resultSet.getString("course_id")),
-                        resultSet.getString("name"),
-                        resultSet.getString("description"),
-                        resultSet.getString("department"),
-                        resultSet.getString("teacher_name"),
-                        resultSet.getDate("start_date").toLocalDate(),
-                        resultSet.getDate("end_date").toLocalDate(),
-                        Optional.ofNullable(resultSet.getString("grade"))
-                                .map(Integer::parseInt)
-                                .orElse(null)
-                );
+        return (resultSet, i) -> {
+            String gradeStr = resultSet.getString("grade");
+            Integer grade = (gradeStr != null) ? Integer.parseInt(gradeStr) : null;
+
+            return new StudentCourse(
+                    UUID.fromString(resultSet.getString("student_id")),
+                    UUID.fromString(resultSet.getString("course_id")),
+                    resultSet.getString("name"),
+                    resultSet.getString("description"),
+                    resultSet.getString("department"),
+                    resultSet.getString("teacher_name"),
+                    resultSet.getDate("start_date").toLocalDate(),
+                    resultSet.getDate("end_date").toLocalDate(),
+                    grade
+            );
+        };
 }
 
 List<StudentCourse> selectAllStudentCourses(UUID studentId) {
