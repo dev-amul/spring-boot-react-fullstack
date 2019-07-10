@@ -1,5 +1,3 @@
-
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,39 +35,44 @@ public class MavenWrapperDownloader {
 
     public static void main(String args[]) {
         System.out.println("- Downloader started");
+        if (args.length == 0 || args[0] == null || args[0].isEmpty()) {
+            System.err.println("- ERROR: Base directory argument is missing or empty.");
+            System.exit(1);
+        }
+
         File baseDirectory = new File(args[0]);
         System.out.println("- Using base directory: " + baseDirectory.getAbsolutePath());
+
+        // Ensure base directory exists and is a directory
+        if (!baseDirectory.exists() || !baseDirectory.isDirectory()) {
+            System.err.println("- ERROR: Base directory does not exist or is not a directory: " + baseDirectory.getAbsolutePath());
+            System.exit(1);
+        }
 
         // If the maven-wrapper.properties exists, read it and check if it contains a custom
         // wrapperUrl parameter.
         File mavenWrapperPropertyFile = new File(baseDirectory, MAVEN_WRAPPER_PROPERTIES_PATH);
         String url = DEFAULT_DOWNLOAD_URL;
-        if(mavenWrapperPropertyFile.exists()) {
-            FileInputStream mavenWrapperPropertyFileInputStream = null;
-            try {
-                mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile);
+        if (mavenWrapperPropertyFile.exists()) {
+            try (FileInputStream mavenWrapperPropertyFileInputStream = new FileInputStream(mavenWrapperPropertyFile)) {
                 Properties mavenWrapperProperties = new Properties();
                 mavenWrapperProperties.load(mavenWrapperPropertyFileInputStream);
                 url = mavenWrapperProperties.getProperty(PROPERTY_NAME_WRAPPER_URL, url);
             } catch (IOException e) {
-                System.out.println("- ERROR loading '" + MAVEN_WRAPPER_PROPERTIES_PATH + "'");
-            } finally {
-                try {
-                    if(mavenWrapperPropertyFileInputStream != null) {
-                        mavenWrapperPropertyFileInputStream.close();
-                    }
-                } catch (IOException e) {
-                    // Ignore ...
-                }
+                System.err.println("- ERROR loading '" + MAVEN_WRAPPER_PROPERTIES_PATH + "': " + e.getMessage());
+                // Continue with default URL if properties file cannot be loaded
             }
         }
-        System.out.println("- Downloading from: : " + url);
+        System.out.println("- Downloading from: " + url);
 
-        File outputFile = new File(baseDirectory.getAbsolutePath(), MAVEN_WRAPPER_JAR_PATH);
-        if(!outputFile.getParentFile().exists()) {
-            if(!outputFile.getParentFile().mkdirs()) {
-                System.out.println(
-                        "- ERROR creating output direcrory '" + outputFile.getParentFile().getAbsolutePath() + "'");
+        File outputFile = new File(baseDirectory, MAVEN_WRAPPER_JAR_PATH); // Use baseDirectory directly
+        File outputDirectory = outputFile.getParentFile();
+
+        if (!outputDirectory.exists()) {
+            if (!outputDirectory.mkdirs()) {
+                System.err.println(
+                        "- ERROR creating output directory '" + outputDirectory.getAbsolutePath() + "'");
+                System.exit(1); // Exit if directory creation fails
             }
         }
         System.out.println("- Downloading to: " + outputFile.getAbsolutePath());
@@ -78,20 +81,17 @@ public class MavenWrapperDownloader {
             System.out.println("Done");
             System.exit(0);
         } catch (Throwable e) {
-            System.out.println("- Error downloading");
+            System.err.println("- Error downloading: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
     }
 
-    private static void downloadFileFromURL(String urlString, File destination) throws Exception {
+    private static void downloadFileFromURL(String urlString, File destination) throws IOException {
         URL website = new URL(urlString);
-        ReadableByteChannel rbc;
-        rbc = Channels.newChannel(website.openStream());
-        FileOutputStream fos = new FileOutputStream(destination);
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        fos.close();
-        rbc.close();
+        try (ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+             FileOutputStream fos = new FileOutputStream(destination)) {
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        }
     }
-
 }
