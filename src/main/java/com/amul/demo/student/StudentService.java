@@ -51,18 +51,26 @@ public class StudentService {
     }
 
     public void updateStudent(UUID studentId, Student student) {
+        // Check if student exists before attempting to update
+        if (!studentDataAccessService.selectExistsStudentById(studentId)) {
+            throw new ApiRequestException("Student with ID " + studentId + " not found.");
+        }
+
         Optional.ofNullable(student.getEmail())
                 .ifPresent(email -> {
+                    if (!emailValidator.test(email)) {
+                        throw new ApiRequestException(email + " is not valid");
+                    }
                     boolean taken = studentDataAccessService.selectExistsEmail(studentId, email);
                     if (!taken) {
                         studentDataAccessService.updateEmail(studentId, email);
                     } else {
-                        throw new IllegalStateException("Email already in use: " + student.getEmail());
+                        throw new ApiRequestException("Email already in use: " + student.getEmail());
                     }
                 });
 
         Optional.ofNullable(student.getFirstName())
-                .filter(fistName -> !StringUtils.isEmpty(fistName))
+                .filter(firstName -> !StringUtils.isEmpty(firstName))
                 .map(StringUtils::capitalize)
                 .ifPresent(firstName -> studentDataAccessService.updateFirstName(studentId, firstName));
 
@@ -73,6 +81,10 @@ public class StudentService {
     }
 
     void deleteStudent(UUID studentId) {
+        // Check if student exists before attempting to delete
+        if (!studentDataAccessService.selectExistsStudentById(studentId)) {
+            throw new ApiRequestException("Student with ID " + studentId + " not found.");
+        }
         studentDataAccessService.deleteStudentById(studentId);
     }
 }

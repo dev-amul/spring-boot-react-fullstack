@@ -62,9 +62,25 @@ public class StudentDataAccessService {
         return jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{email},
-                (resultSet, i) -> resultSet.getBoolean(1)
+                Boolean.class // More concise way to get a boolean
         );
     }
+
+    @SuppressWarnings("ConstantConditions")
+    boolean selectExistsStudentById(UUID studentId) {
+        String sql = "" +
+                "SELECT EXISTS ( " +
+                "   SELECT 1 " +
+                "   FROM student " +
+                "   WHERE student_id = ? " +
+                ")";
+        return jdbcTemplate.queryForObject(
+                sql,
+                new Object[]{studentId},
+                Boolean.class
+        );
+    }
+
 
     List<StudentCourse> selectAllStudentCourses(UUID studentId) {
         String sql = "" +
@@ -90,33 +106,33 @@ public class StudentDataAccessService {
     }
 
     private RowMapper<StudentCourse> mapStudentCourseFromDb() {
-        return (resultSet, i) ->
-                new StudentCourse(
-                        UUID.fromString(resultSet.getString("student_id")),
-                        UUID.fromString(resultSet.getString("course_id")),
-                        resultSet.getString("name"),
-                        resultSet.getString("description"),
-                        resultSet.getString("department"),
-                        resultSet.getString("teacher_name"),
-                        resultSet.getDate("start_date").toLocalDate(),
-                        resultSet.getDate("end_date").toLocalDate(),
-                        Optional.ofNullable(resultSet.getString("grade"))
-                                .map(Integer::parseInt)
-                                .orElse(null)
-                );
+        return (resultSet, i) -> {
+            String gradeStr = resultSet.getString("grade");
+            Integer grade = (gradeStr != null) ? Integer.parseInt(gradeStr) : null;
+
+            return new StudentCourse(
+                    UUID.fromString(resultSet.getString("student_id")),
+                    UUID.fromString(resultSet.getString("course_id")),
+                    resultSet.getString("name"),
+                    resultSet.getString("description"),
+                    resultSet.getString("department"),
+                    resultSet.getString("teacher_name"),
+                    resultSet.getDate("start_date").toLocalDate(),
+                    resultSet.getDate("end_date").toLocalDate(),
+                    grade
+            );
+        };
     }
 
     private RowMapper<Student> mapStudentFomDb() {
         return (resultSet, i) -> {
-            String studentIdStr = resultSet.getString("student_id");
-            UUID studentId = UUID.fromString(studentIdStr);
-
+            // No need for Optional.ofNullable for these as they are non-nullable in the database schema typically
+            UUID studentId = UUID.fromString(resultSet.getString("student_id"));
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             String email = resultSet.getString("email");
+            Student.Gender gender = Student.Gender.valueOf(resultSet.getString("gender").toUpperCase());
 
-            String genderStr = resultSet.getString("gender").toUpperCase();
-            Student.Gender gender = Student.Gender.valueOf(genderStr);
             return new Student(
                     studentId,
                     firstName,
@@ -163,7 +179,7 @@ public class StudentDataAccessService {
         return jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{studentId, email},
-                (resultSet, columnIndex) -> resultSet.getBoolean(1)
+                Boolean.class // More concise way to get a boolean
         );
     }
 
